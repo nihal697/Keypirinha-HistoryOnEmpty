@@ -17,11 +17,26 @@ most recent history items on **empty input in normal Run mode**
 ## Status
 
 * ✅ Slice 1: fork + discovery (core closed, `Keypirinha.history` JSON understood)
-* ▶ Slice 2 (this commit): probe — single dummy item proves the empty-query
-  `on_suggest` hook fires in Run mode
-* ⬜ Slice 3: real history items from `Keypirinha.history` (dedup, file/app
-  targets via shell-execute)
-* ⬜ Slice 4: polish (`max_items`, ignore-list, non-file targets)
+* ✅ Slice 2: probe — proved the core never calls plugins on **empty** Run input
+  (log: plugin loads, zero `on_suggest` calls), so true history-on-empty is
+  impossible without core source. Probe retired.
+* ▶ Slice 3 (this commit): keyword plugin — `Alt+Space`, `h`, `Tab` shows the
+  most-recent launchable history items, `Enter` runs one via shell-execute.
+* ⬜ Slice 4: polish (`max_items`, `history_path` override — both already in
+  `historyonempty.ini` — plus `ms-settings:`/`shell:` targets if wanted)
+
+## Usage (Slice 3)
+
+1. Keypirinha tray icon → `Reload Configuration`
+2. `Alt+Space`, type `h`, press `Tab` → recent launches, most recent first
+3. Type to filter (e.g. `h`, `Tab`, `brav` → Brave), `↑`/`↓`, `Enter` to launch
+4. Use `Tab`, not `Space`, to enter the keyword — `space_as_tab` stays off so
+   multi-word searches like `file explorer` keep working
+
+Covered: apps and files (`.lnk`, `.exe`, URLs). Skipped for now: internal
+commands (`restart`), `ms-settings:` pages, `shell:AppsFolder` apps — the
+launcher helper validates local existence first, so those targets can't go
+through it (see `_launchable`).
 
 ## Dev install (portable)
 
